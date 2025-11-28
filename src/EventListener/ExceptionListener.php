@@ -54,8 +54,8 @@ class ExceptionListener implements EventSubscriberInterface
         }
 
         $response = new JsonResponse([
-            'error' => 'pas bon du tout',
-            'details' => $exception->getMessage(),
+            'error' => 'Internal server error',
+            'message' => $exception->getMessage(),
         ], JsonResponse::HTTP_BAD_REQUEST);
 
         $event->setResponse($response);

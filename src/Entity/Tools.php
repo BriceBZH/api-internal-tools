@@ -50,7 +50,7 @@ class Tools
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['post:tool', 'read:tool'])]
+    #[Groups(['post:tool', 'read:tool', 'put:tool'])]
     #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?string $description = null;
 
@@ -67,11 +67,10 @@ class Tools
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['post:tool', 'read:tool'])]
-    // #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?Categories $category = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    #[Groups(['post:tool', 'read:tool', 'read:tools'])]
+    #[Groups(['post:tool', 'read:tool', 'read:tools', 'put:tool'])]
     private ?string $monthlyCost = null;
 
     #[ORM\Column]
@@ -84,7 +83,7 @@ class Tools
     private ?string $ownerDepartment = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:tool', 'read:tools'])]
+    #[Groups(['read:tool', 'read:tools', 'put:tool'])]
     #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?string $status = null;
 
