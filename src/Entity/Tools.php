@@ -3,10 +3,39 @@
 namespace App\Entity;
 
 use App\Repository\ToolsRepository;
+use App\Controller\ToolsController;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiRange;
 
 #[ORM\Entity(repositoryClass: ToolsRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read:tool', 'read:category', 'read:tools']],
+    operations: [
+        new GetCollection(),
+        new Get(
+            controller: ToolsController::class,
+            denormalizationContext: ['groups' => ['read:tool', 'read:category']]
+        ),
+        new Post(denormalizationContext: ['groups' => ['post:tool']]),
+        new Put(denormalizationContext: ['groups' => ['put:tool']]),
+    ]
+)]
+#[ApiFilter(RangeFilter::class, properties: [
+    'monthlyCost',
+])]
 class Tools
 {
     #[ORM\Id]
@@ -15,37 +44,56 @@ class Tools
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    
+    #[Groups(['post:tool', 'read:tool'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['post:tool', 'read:tool'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?string $description = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['post:tool', 'read:tool'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?string $vendor = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['post:tool', 'read:tool'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?string $websiteUrl = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['post:tool', 'read:tool'])]
+    // #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?Categories $category = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups(['post:tool', 'read:tool', 'read:tools'])]
     private ?string $monthlyCost = null;
 
     #[ORM\Column]
+    #[Groups(['post:tool', 'read:tool'])]
     private ?int $activeUsersCount = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['post:tool', 'read:tool', 'read:tools'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?string $ownerDepartment = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read:tool', 'read:tools'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?string $status = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['read:tool'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['read:tool'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int
@@ -161,14 +209,14 @@ class Tools
         return $this;
     }
 
-    public function getCreateadAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->createadAt;
+        return $this->createdAt;
     }
 
-    public function setCreateadAt(?\DateTimeImmutable $createadAt): static
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
     {
-        $this->createadAt = $createadAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -184,4 +232,6 @@ class Tools
 
         return $this;
     }
+
+    
 }

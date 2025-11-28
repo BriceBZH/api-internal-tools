@@ -5,16 +5,22 @@ namespace App\Entity;
 use App\Repository\CategoriesRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CategoriesRepository::class)]
+#[ApiResource()]
 class Categories
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['post:tool'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['read:category'])]
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
